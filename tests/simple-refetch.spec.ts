@@ -1,7 +1,6 @@
 import { expect, test } from "@playwright/test";
 
 test("Repeat Refetch Data", async ({ page }) => {
-  test.setTimeout(0);
 
   await page.goto("/");
   await expect(page.locator("table")).toBeVisible();
