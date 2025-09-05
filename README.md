@@ -1,6 +1,6 @@
 # React Aria Table DOM Exception Reproduction
 
-This repository reproduces a DOM exception error that occurs when using React Aria's Table component with dynamic collections and `useSuspenseQuery`.
+This repository reproduces a DOM exception error that occurs when using React Aria's Table component with dynamic collections.
 
 ![](video.webm)
 
@@ -13,7 +13,7 @@ Used versions:
     "react-aria-components": "1.12.1",
 ```
 
-When rapidly refetching data in a Table component using `useSuspenseQuery` with dynamic collections (`<TableBody items={data}>`), the following error can occur:
+When rapidly updating data in a Table component with dynamic collections (`<TableBody items={data}>`) using `useTransition`, the following error can occur:
 
 ```
 Error: Attempted to access node before it was defined.
@@ -77,17 +77,18 @@ The app generates 50-100 random user records with each refetch, using:
 
 ## Current Implementation
 
-- Uses `useTransition` to wrap data refetch operations
-- Visual feedback: Table opacity reduces to 0.5 during pending state
+- Uses `useTransition` to wrap data update operations (this appears to be key to reproducing the issue)
+- Visual feedback: Table opacity reduces to 0.5 during pending state  
 - Dynamic collections: `<TableBody items={data}>` pattern
-- Each row has a unique UUID as its key
+- Each row has a unique UUID (`crypto.randomUUID()`) as its key
+- Simple state update with `useState` (no external data fetching libraries needed)
 
 ## Related Issues
 
 - The error occurs in React Aria's collections Document.ts
-- Related to dynamic collections with rapidly changing data
+- Related to dynamic collections with rapidly changing data wrapped in `useTransition`
 - The issue is more likely to occur on slower CPUs or under heavy load
-- May be triggered when using `useSuspenseQuery` with frequent refetches
+- The combination of `useTransition` + dynamic collections appears to be the trigger
 
 ## Technical Details
 
@@ -95,8 +96,7 @@ The app generates 50-100 random user records with each refetch, using:
 - React DOM: 19.1.1
 - React Aria: 3.43.1
 - React Aria Components: 1.12.1
-- TanStack Query: 5.62.15
 - TypeScript: 5.7.3
 - Vite: 6.0.7
 
-The error happens during React's rendering phase when the Table component with dynamic collections tries to access DOM nodes that have been removed or not yet defined due to rapid data updates.
+The error happens during React's rendering phase when the Table component with dynamic collections tries to access DOM nodes that have been removed or not yet defined due to rapid data updates wrapped in `useTransition`.

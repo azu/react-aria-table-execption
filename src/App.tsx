@@ -1,85 +1,45 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { Suspense, useState, useTransition } from "react";
-import { Cell, Column, Row, Table, TableBody, TableHeader, } from "react-aria-components";
+import { useState, useTransition } from "react";
+import {
+  Table,
+  TableBody,
+  TableHeader,
+  Column,
+  Row,
+  Cell,
+} from "react-aria-components";
 import { ErrorBoundary } from "react-error-boundary";
 
-// Mock data type
 type User = {
   id: string;
   name: string;
   email: string;
   role: string;
   status: string;
-}
+};
 
-// Mock API function
-async function fetchUsers(): Promise<User[]> {
-  // Random number of users between 50-100
-  const userCount = Math.floor(Math.random() * 51) + 150;
-  const roles = ["Admin", "User", "Manager", "Guest"];
-  const statuses = ["Active", "Inactive", "Pending"];
-  const firstNames = ["John", "Jane", "Bob", "Alice", "Tom", "Emma", "Mike", "Sara", "David", "Lisa"];
-  const lastNames = ["Smith", "Johnson", "Williams", "Jones", "Brown", "Davis", "Miller", "Wilson", "Moore", "Taylor"];
+const firstNames = ["John", "Jane", "Bob", "Alice", "Tom", "Emma", "Mike", "Sara", "David", "Lisa"];
+const lastNames = ["Smith", "Johnson", "Williams", "Jones", "Brown", "Davis", "Miller", "Wilson", "Moore", "Taylor"];
+const roles = ["Admin", "User", "Manager", "Guest"];
+const statuses = ["Active", "Inactive", "Pending"];
 
-  return Array.from({ length: userCount }, () => {
-    const randomFirst = firstNames[Math.floor(Math.random() * firstNames.length)];
-    const randomLast = lastNames[Math.floor(Math.random() * lastNames.length)];
+function generateRandomData(count: number): User[] {
+  const users: User[] = [];
+
+  for (let i = 0; i < count; i++) {
+    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
     const randomId = crypto.randomUUID();
 
-    return {
+    users.push({
       id: randomId,
-      name: `${randomFirst} ${randomLast}`,
-      email: `${randomFirst.toLowerCase()}.${randomLast.toLowerCase()}${randomId}@example.com`,
+      name: `${firstName} ${lastName}`,
+      email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}${randomId}@example.com`,
       role: roles[Math.floor(Math.random() * roles.length)],
-      status: statuses[Math.floor(Math.random() * statuses.length)],
-    };
-  });
-}
-
-function TableWithModal() {
-  const [refetchCount, setRefetchCount] = useState(0);
-  const [isPending, startTransition] = useTransition();
-
-  const { data, refetch } = useSuspenseQuery({
-    queryKey: ["users", refetchCount],
-    queryFn: fetchUsers,
-  });
-
-  const handleRefetch = () => {
-    startTransition(() => {
-      setRefetchCount((prev) => prev + 1);
-    })
-    startTransition(async () => {
-      await refetch();
+      status: statuses[Math.floor(Math.random() * statuses.length)]
     });
-  };
+  }
 
-  return (
-    <div className="table-container">
-      <div className="controls">
-        <button onClick={handleRefetch} data-testid={"refetch-button"}>Refetch Data</button>
-      </div>
-
-      <Table aria-label="Users table" style={{ opacity: isPending ? 0.5 : 1, transition: 'opacity 0.2s' }}>
-        <TableHeader>
-          <Column isRowHeader>Name</Column>
-          <Column>Email</Column>
-          <Column>Role</Column>
-          <Column>Status</Column>
-        </TableHeader>
-        <TableBody items={data}>
-          {(user) => (
-            <Row key={user.id} id={user.id}>
-              <Cell>{user.name}</Cell>
-              <Cell>{user.email}</Cell>
-              <Cell>{user.role}</Cell>
-              <Cell>{user.status}</Cell>
-            </Row>
-          )}
-        </TableBody>
-      </Table>
-    </div>
-  );
+  return users;
 }
 
 function ErrorFallback({
@@ -102,26 +62,60 @@ function ErrorFallback({
 }
 
 function App() {
+  const [data, setData] = useState<User[]>(() => generateRandomData(150));
+  const [isPending, startTransition] = useTransition();
+
+  const handleRefetch = () => {
+    startTransition(() => {
+      const count = Math.floor(Math.random() * 51) + 150; // 150-200 items
+      setData(generateRandomData(count));
+    });
+  };
+
   return (
     <div className="container">
       <div className="header">
         <h1 className="title">React Aria Table DOM Exception Reproduction</h1>
         <p className="description">
           This app reproduces the "Attempted to access node before it was
-          defined" error that occurs when using React Aria Table with Modal and
-          useSuspenseQuery.
-        </p>
-        <p className="description">
-          The error occurs when closing a modal and immediately refetching table
-          data, causing a race condition in React Aria's internal DOM
-          management.
+          defined" error that occurs when using React Aria Table with dynamic collections.
         </p>
       </div>
 
       <ErrorBoundary FallbackComponent={ErrorFallback}>
-        <Suspense fallback={<div className="loading">Loading...</div>}>
-          <TableWithModal/>
-        </Suspense>
+        <div className="table-container">
+          <div className="controls">
+            <button
+              onClick={handleRefetch}
+              data-testid="refetch-button"
+              // disabled={isPending}
+            >
+              {isPending ? "Refetching..." : "Refetch Data"}
+            </button>
+          </div>
+
+          <Table
+            aria-label="Users table"
+            style={{ opacity: isPending ? 0.5 : 1, transition: 'opacity 0.2s' }}
+          >
+            <TableHeader>
+              <Column isRowHeader>Name</Column>
+              <Column>Email</Column>
+              <Column>Role</Column>
+              <Column>Status</Column>
+            </TableHeader>
+            <TableBody items={data}>
+              {(user) => (
+                <Row key={user.id} id={user.id}>
+                  <Cell>{user.name}</Cell>
+                  <Cell>{user.email}</Cell>
+                  <Cell>{user.role}</Cell>
+                  <Cell>{user.status}</Cell>
+                </Row>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </ErrorBoundary>
     </div>
   );
