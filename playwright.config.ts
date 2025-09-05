@@ -36,7 +36,7 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: isProduction ? "pnpm preview" : "pnpm dev",
+    command: isProduction ? "npm run preview" : "npm run dev",
     url: `http://localhost:${port}`,
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,

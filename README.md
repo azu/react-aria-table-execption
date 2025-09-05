@@ -33,35 +33,35 @@ No Issue Versions:
 
 ```bash
 # Install dependencies
-pnpm install
+npm install
 
 # Run the development server
-pnpm dev
+npm run dev
 ```
 
 ## Running Tests
 
 ```bash
 # Install Playwright browsers (first time only)
-pnpm exec playwright install chromium
+npm exec playwright install chromium
 
 # Run tests once
-pnpm test
+npm test
 
 # Run tests with production build
-pnpm test:build
+npm run test:build
 
 # Run simple refetch test
-pnpm test:build -- tests/simple-refetch.spec.ts
+npm run test:build -- tests/simple-refetch.spec.ts
 
 # Run test 100 times to catch flaky errors
-pnpm test:build -- tests/simple-refetch.spec.ts --repeat-each=100
+npm run test:build -- tests/simple-refetch.spec.ts --repeat-each=100
 
 # Open Playwright UI for debugging
-pnpm test:ui
+npm run test:ui
 
 # Debug tests step by step
-pnpm test:debug
+npm run test:debug
 ```
 
 ## How to Reproduce
