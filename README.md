@@ -6,6 +6,13 @@ This repository reproduces a DOM exception error that occurs when using React Ar
 
 ## Issue Description
 
+Used versions:
+
+```
+    "react-aria": "3.43.1",
+    "react-aria-components": "1.12.1",
+```
+
 When rapidly refetching data in a Table component using `useSuspenseQuery` with dynamic collections (`<TableBody items={data}>`), the following error can occur:
 
 ```
@@ -14,6 +21,13 @@ Check if setProps wasn't called before attempting to access the node.
 ```
 
 This error originates from React Aria's internal Document.ts file and appears to be related to how dynamic collections handle rapid data updates.
+
+No Issue Versions:
+
+```
+    "react-aria": "3.42.0",
+    "react-aria-components": "1.11.0",
+```
 
 ## Setup
 

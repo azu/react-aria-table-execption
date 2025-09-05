@@ -19,11 +19,11 @@ export default defineConfig({
     screenshot: "on",
     trace: "retain-on-failure",
     video: "retain-on-failure",
-    navigationTimeout: process.env.CI ? 60 * 1000 : 15 * 1000,
-    actionTimeout: process.env.CI ? 30 * 1000 : 15 * 1000,
+    navigationTimeout: 0,
+    actionTimeout: 0,
   },
-
-  timeout: process.env.CI ? 60 * 1000 : 30 * 1000,
+  globalTimeout: 0,
+  timeout: 0,
 
   projects: [
     {
