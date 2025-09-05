@@ -2,7 +2,9 @@
 
 This repository reproduces a DOM exception error that occurs when using React Aria's Table component with dynamic collections.
 
-![](video.webm)
+- Issue: https://github.com/adobe/react-spectrum/issues/8822
+- Demo: https://react-aria-table-execption.vercel.app/
+
 
 ## Issue Description
 
