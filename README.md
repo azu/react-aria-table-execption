@@ -2,6 +2,8 @@
 
 This repository reproduces a DOM exception error that occurs when using React Aria's Table component with dynamic collections and `useSuspenseQuery`.
 
+![](video.webm)
+
 ## Issue Description
 
 When rapidly refetching data in a Table component using `useSuspenseQuery` with dynamic collections (`<TableBody items={data}>`), the following error can occur:
