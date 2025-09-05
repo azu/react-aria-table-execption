@@ -12,21 +12,16 @@ type User = {
   status: string;
 }
 
-// Simulate API delay
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 // Mock API function
 async function fetchUsers(): Promise<User[]> {
-  await delay(50);
   // Random number of users between 50-100
-  const userCount = Math.floor(Math.random() * 51) + 50;
-  console.log(userCount)
+  const userCount = Math.floor(Math.random() * 51) + 150;
   const roles = ["Admin", "User", "Manager", "Guest"];
   const statuses = ["Active", "Inactive", "Pending"];
   const firstNames = ["John", "Jane", "Bob", "Alice", "Tom", "Emma", "Mike", "Sara", "David", "Lisa"];
   const lastNames = ["Smith", "Johnson", "Williams", "Jones", "Brown", "Davis", "Miller", "Wilson", "Moore", "Taylor"];
 
-  return Array.from({ length: userCount }, (_, i) => {
+  return Array.from({ length: userCount }, () => {
     const randomFirst = firstNames[Math.floor(Math.random() * firstNames.length)];
     const randomLast = lastNames[Math.floor(Math.random() * lastNames.length)];
     const randomId = crypto.randomUUID();

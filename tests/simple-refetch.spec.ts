@@ -6,7 +6,7 @@ test("Repeat Refetch Data", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("table")).toBeVisible();
 
-  const iterations = 100;
+  const iterations = 1000;
 
   for (let i = 0; i < iterations; i++) {
     console.log(`Iteration ${i + 1}/${iterations}`);
